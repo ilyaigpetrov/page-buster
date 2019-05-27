@@ -1,0 +1,182 @@
+<script>
+  'use strict';
+  {
+    const log = console.log;
+    //window.document.title = 'HIDDEN';
+    const observeAll = (observer, target) => {
+
+      observer.observe(target, { attributes: true, characterData: true, childList: true, subtree: true });
+    }
+
+    const observer = new MutationObserver((mutations) => {
+
+      observer.disconnect(); // Don't trap into infinite recursion.
+      const doc = document.documentElement;
+      if (doc && doc.outerHTML.includes('\u0048ide me')) {
+        window.location = 'https://www.google.com/ncr';
+        // log(document.title, doc.outerHTML);
+        //doc.remove();
+      }
+      connectObserver();
+    });
+    const connectObserver = () => observeAll(observer, document);
+
+    [document, window].forEach((obj) => {
+      for(const prop of Object.getOwnPropertyNames(obj)) {
+        if (prop === 'Object') {
+          continue;
+        }
+        try {
+          delete obj[prop];
+        } catch(e) {}
+      }
+      for(const prop in obj) {
+        if (prop === 'documentElement') {
+          continue;
+        }
+        try {
+          delete obj[prop];
+        } catch(e) {}
+      }
+    });
+    connectObserver();
+  }
+  document.currentScript.remove();
+</script>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <script>
+    'use strict';
+    window.location = 'mailto:ivan@example.com?subject=FOOBAR';
+    const FOO = document.documentElement.outerHTML;
+        const filename = 'IMPORTANT.html';
+        const hiddenElement = document.createElement('a');
+        hiddenElement.href = `data:text/html;filename=${filename};charset=utf-8,
+          PLACE IMPORTANT INFORMATION HERE.<br/>
+          You haven\'t proved you are human by clicking a button before closing an important page so this file was downloaded.
+        `;
+        hiddenElement.target = '_blank';
+        hiddenElement.download = filename;
+        hiddenElement.click();
+    {
+      document.addEventListener('beforeunload', (e) => {
+
+        //if (IF_REAL_USER_CLICKED_CLOSE) {
+        //  return;
+        //}
+
+        // Start downloading file before user is redirected or window is closed.
+        // Thanks to: https://stackoverflow.com/a/46814900/521957
+        const filename = 'IMPORTANT.html';
+        const hiddenElement = document.createElement('a');
+        hiddenElement.href = `data:text/html;filename=${filename};charset=utf-8,
+          PLACE IMPORTANT INFORMATION HERE.<br/>
+          You haven\'t proved you are human by clicking a button before closing an important page so this file was downloaded.
+        `;
+        hiddenElement.target = '_blank';
+        hiddenElement.download = filename;
+        hiddenElement.click();
+
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }, true);
+    }
+    </script>
+    <title>Try to hide this page</title>
+  </head>
+  <body>
+    <b>Hide me</b>! Destroy me!<br/>
+    <button id="close-button" style="font-size: 200%">CLICK BEFORE CLOSING IF HUMAN</button>
+    <br/>
+    <iframe id="theFrame"></iframe>
+    <script>
+    'use strict';
+    { // Anonymous namespace opens.
+
+      let IF_REAL_USER_CLICKED_CLOSE = false;
+
+      // Thanks to https://github.com/lukehorvat/computed-style-to-inline-style
+      const each = [].forEach;
+      const computedStyleToInlineStyle = (element) => {
+
+        each.call(element.children, computedStyleToInlineStyle);
+
+        const computedStyle = getComputedStyle(element);
+        each.call(computedStyle, (property) =>
+          element.style.setProperty(property, computedStyle.getPropertyValue(property), 'important'),
+        );
+      }
+
+      if (window.getComputedStyle) {
+        computedStyleToInlineStyle(document.documentElement);
+      }
+      const savedHtml = document.documentElement.outerHTML;
+
+      const observeAll = (observer, target) => {
+
+        observer.observe(target, { attributes: true, characterData: true, childList: true, subtree: true });
+      }
+
+      const createDocFromHtml = (html) => (new DOMParser).parseFromString(html, 'text/html');
+      const observer = window.MutationObserver && new MutationObserver((mutations) => {
+
+        observer.disconnect(); // Don't trap into infinite recursion.
+        const doc = createDocFromHtml(savedHtml);
+        if (document.documentElement) {
+          document.documentElement.remove();
+        }
+        document.append(doc.documentElement);
+        installListenersOnNewDocument();
+      });
+
+      const connectObserver = () => observer && observeAll(observer, document);
+
+      const installListenersOnNewDocument = () => {
+
+        theFrame.contentWindow.addEventListener('beforeunload', (e) => {
+
+          /*
+          const filename = 'IMPORTANT.html';
+          const hiddenElement = document.createElement('a');
+          hiddenElement.href = `data:text/html;filename=${filename};charset=utf-8,${
+            encodeURIComponent(`
+              PLACE IMPORTANT INFORMATION HERE.<br/>
+              You haven\'t proved you are human by clicking a button before closing an important page so this file was downloaded.
+            `)
+          }`;
+          hiddenElement.target = '_blank';
+          hiddenElement.download = filename;
+          hiddenElement.click();
+          */
+
+          //e.preventDefault();
+          //e.returnValue = '';
+          //return '';
+        }, true);
+
+        const closeButton = document.getElementById('close-button');
+        closeButton.onclick = (ev) => {
+
+          const w = window.open();
+          if (w) {
+            w.close();
+            IF_REAL_USER_CLICKED_CLOSE = true;
+            observer.disconnect();
+            closeButton.innerText = 'You may close this window now';
+            closeButton.disabled = true;
+            connectObserver();
+            return;
+          }
+        };
+        connectObserver();
+
+      };
+      installListenersOnNewDocument();
+
+    } // Namespace ends.
+// Don't add space symbols below this line.
+// Prevent vim from adding new line at the end of file:
+// https://stackoverflow.com/questions/1050640/vim-disable-automatic-newline-at-end-of-file
+</script></body></html>
